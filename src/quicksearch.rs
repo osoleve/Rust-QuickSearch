@@ -11,19 +11,15 @@ pub struct QuickSearch {
 }
 
 impl QuickSearch {
-    fn normalize(s: String) -> String {
-        unidecode(&s)
+    fn normalize(s: &str) -> String {
+        unidecode(s)
             .replace(&['.', '\''], "")
             .replace('-', " ")
             .to_lowercase()
     }
 
     fn tokenize(s: &str) -> HashSet<String> {
-        // s.unicode_words()
-        //     .map(|x| Self::normalize(x.to_string()))
-        //     .collect()
-        let v: Vec<&str> = s.graphemes(true).collect();
-        HashSet::from_iter((0..v.len() - 3).map(|i| v[i..i + 3].join("")))
+        s.unicode_words().map(|x| Self::normalize(x)).collect()
     }
 
     #[must_use]
@@ -58,24 +54,25 @@ impl QuickSearch {
         }
     }
 
+    fn scorer(source: &str, target: &str) -> f64 {
+        jaro_winkler(source, target)
+        //ngram_jaccard(source, target, 3) //trigram jaccard
+        //ngram_jaccard(source, target, 2) //bigram jaccard
+    }
+
     /// # Panics
     ///
     /// Will panic if `scorer` yields an f64 that
     /// can't be compared against other f64s.
     #[must_use]
     pub fn find(&self, name: &str) -> Option<Vec<(String, f64)>> {
-        let scorer = trigram_jaccard;
-        let name = Self::normalize(name.to_string());
         if let Some(names) = self.get_token_matches(&name) {
             let mut results = names
                 .iter()
                 .map(|s| {
                     (
-                        s.to_string(),
-                        scorer(
-                            &Self::normalize(name.to_string()),
-                            &Self::normalize(s.to_string()),
-                        ),
+                        (*s).to_string(),
+                        Self::scorer(&Self::normalize(name), &Self::normalize(s)),
                     )
                 })
                 .collect::<Vec<(String, f64)>>();

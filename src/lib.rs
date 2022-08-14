@@ -1,5 +1,6 @@
 pub mod quicksearch;
 pub mod string_sim;
+pub mod util;
 
 #[cfg(test)]
 mod tests {

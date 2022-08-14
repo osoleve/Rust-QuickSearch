@@ -1,9 +1,10 @@
-use core::hash::Hash;
 use std::cmp::max;
 use std::cmp::min;
 use std::collections::HashSet;
 
 use unicode_segmentation::UnicodeSegmentation;
+
+use crate::util::jaccard_similarity;
 
 #[must_use]
 pub fn jaro(source: &str, target: &str) -> f64 {
@@ -96,7 +97,7 @@ pub fn jaro_winkler(source: &str, target: &str) -> f64 {
 }
 
 #[must_use]
-fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
+pub fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
     let source_chars: Vec<&str> = source.graphemes(true).collect();
     let target_chars: Vec<&str> = target.graphemes(true).collect();
 
@@ -104,30 +105,4 @@ fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
     let target_bigrams: HashSet<&[&str]> = target_chars.windows(ngram_width).collect();
 
     jaccard_similarity(&source_bigrams, &target_bigrams)
-}
-
-#[must_use]
-pub fn char_jaccard(source: &str, target: &str) -> f64 {
-    ngram_jaccard(source, target, 1)
-}
-
-#[must_use]
-pub fn bigram_jaccard(source: &str, target: &str) -> f64 {
-    ngram_jaccard(source, target, 2)
-}
-
-#[must_use]
-pub fn trigram_jaccard(source: &str, target: &str) -> f64 {
-    ngram_jaccard(source, target, 3)
-}
-
-#[must_use]
-fn jaccard_similarity<T>(a: &HashSet<T>, b: &HashSet<T>) -> f64
-where
-    T: Eq + Hash,
-{
-    let common_elements = a.intersection(b).count() as f64;
-    let total_elements = a.union(b).count() as f64;
-
-    common_elements / total_elements
 }
