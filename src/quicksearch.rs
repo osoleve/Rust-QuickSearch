@@ -4,7 +4,7 @@ use std::collections::HashSet;
 use unicode_segmentation::UnicodeSegmentation;
 use unidecode::unidecode;
 
-use crate::string_sim::*;
+use crate::string_sim::jaro_winkler;
 
 pub struct QuickSearch {
     token_index: HashMap<String, HashSet<String>>,
