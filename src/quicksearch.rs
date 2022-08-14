@@ -19,7 +19,7 @@ impl QuickSearch {
     }
 
     fn tokenize(s: &str) -> HashSet<String> {
-        s.unicode_words().map(|x| Self::normalize(x)).collect()
+        s.unicode_words().map(Self::normalize).collect()
     }
 
     #[must_use]
@@ -66,7 +66,7 @@ impl QuickSearch {
     /// can't be compared against other f64s.
     #[must_use]
     pub fn find(&self, name: &str) -> Option<Vec<(String, f64)>> {
-        if let Some(names) = self.get_token_matches(&name) {
+        if let Some(names) = self.get_token_matches(name) {
             let mut results = names
                 .iter()
                 .map(|s| {
