@@ -5,6 +5,7 @@ pub mod util;
 #[cfg(test)]
 mod tests {
     use crate::quicksearch::QuickSearch;
+    use crate::string_sim::jaro_winkler;
     use crate::util::lines_from_file;
     #[test]
     fn it_works() {
@@ -16,5 +17,9 @@ mod tests {
         } else {
             panic!()
         }
+    }
+    #[test]
+    fn jaro_winkler_works() {
+        assert!((jaro_winkler("Trapeze", "Trace") * 1000.0).round() == 853.0)
     }
 }
