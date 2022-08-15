@@ -8,7 +8,7 @@ fn main() {
     println!("Building token index...");
     let qs = QuickSearch::new(&names);
 
-    let name = "Spencer Q. Peanut";
+    let name = "John Q. Peanut";
     println!("Searching for {name} in {} names", names.len());
 
     if let Some(results) = qs.find(name) {
