@@ -1,39 +1,41 @@
 # Rust-QuickSearch
 Yet Another In-Memory Name Search Engine
 
-A blazing fast proper name search engine that scales well to anything your memory can hold. 
+A blazing fast proper name search engine that scales well to anything your memory can hold.
 Uses token indexing as a pre-clustering heuristic, so it might work for things other than names but no promises.
 
 Uses Jaro-Winkler to score, but also includes an implementation of ngram Jaccard that can be used.
+
+Interface is a WIP but it works.
 
 ## Usage
 Feed `QuickSearch::new()` a list of names (`&str`), then use `find()` to search in those names!
 
 ## Example
-Running the crate should yield the following:
+Running the crate should yield the following (approximately, since sort is unstable):
 ```
 Building token index...
-Searching for Spencer Q. Peanut in 100000 names
+Searching for John Q. Peanut in 100000 names
 [
     (
-        "Spencer Kent",
-        0.9208333333333333,
+        "John Dean",
+        0.9008547008547009,
     ),
     (
-        "Spencer Evans",
-        0.9067307692307692,
+        "John Bean",
+        0.9008547008547009,
     ),
     (
-        "Spencer Tran",
-        0.893560606060606,
+        "John Cantu",
+        0.8962393162393162,
     ),
     (
-        "Spencer Carpenter",
-        0.8923642533936651,
+        "John Eaton",
+        0.8962393162393162,
     ),
     (
-        "Spencer Leon",
-        0.8916666666666667,
+        "John Pearson",
+        0.8884615384615385,
     ),
 ]
 ```
