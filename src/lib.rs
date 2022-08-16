@@ -5,7 +5,7 @@ pub mod util;
 #[cfg(test)]
 mod tests {
     use crate::quicksearch::QuickSearch;
-    use crate::string_sim::{jaro_winkler, ngram_jaccard};
+    use crate::string_sim::{jaro, jaro_winkler, ngram_jaccard};
     use crate::util::{jaccard_similarity, lines_from_file};
     use std::collections::HashSet;
     #[test]
@@ -19,15 +19,22 @@ mod tests {
         let qs = QuickSearch::new(&names);
         let name = "Nicky Jenkins";
         if let Some(results) = qs.find(name) {
-            assert!(results[0].0.contains("Jenkins"));
             assert!(results.len() == 1)
-        } else {
-            panic!()
         }
+        let name = "John Jenkins";
+        if let Some(results) = qs.find(name) {
+            assert!(results.len() == 2)
+        }
+        let name = "Not Gonna Match";
+        assert!(qs.find(name) == None);
+    }
+    #[test]
+    fn jaro_works() {
+        assert!((jaro("MARTHA", "MARHTA") * 100.0).round() == 94.0)
     }
     #[test]
     fn jaro_winkler_works() {
-        assert!((jaro_winkler("Trapeze", "Trace") * 100.0).round() == 85.0)
+        assert!((jaro_winkler("Crave", "Crate") * 100.0).round() == 91.0)
     }
     #[test]
     fn jaccard_works() {
@@ -50,5 +57,14 @@ mod tests {
         assert!(ngram_jaccard(a, b, 1) == 1.0);
         assert!((ngram_jaccard(a, b, 2) * 100.0).round() == 67.0);
         assert!((ngram_jaccard(a, b, 3) * 100.0).round() == 33.0);
+    }
+    #[test]
+    fn ranking_works() {
+        let names = vec!["Nichole Jenkins".to_string(), "John Smith".to_string()];
+        let qs = QuickSearch::new(&names);
+        let name = "Nichole Smith";
+        if let Some(results) = qs.find(name) {
+            assert!(results[0].0.contains("Jenkins"));
+        }
     }
 }

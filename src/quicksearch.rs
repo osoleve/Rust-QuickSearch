@@ -47,14 +47,14 @@ impl QuickSearch {
             }
         }
 
-        if matches.is_empty() {
-            None
-        } else {
+        if !matches.is_empty() {
             Some(matches)
+        } else {
+            None
         }
     }
 
-    fn scorer(source: &str, target: &str) -> f64 {
+    fn score(source: &str, target: &str) -> f64 {
         jaro_winkler(source, target)
         //ngram_jaccard(source, target, 3) //trigram jaccard
         //ngram_jaccard(source, target, 2) //bigram jaccard
@@ -72,7 +72,7 @@ impl QuickSearch {
                 .map(|s| {
                     (
                         (*s).to_string(),
-                        Self::scorer(&Self::normalize(name), &Self::normalize(s)),
+                        Self::score(&Self::normalize(name), &Self::normalize(s)),
                     )
                 })
                 .collect::<Vec<(String, f64)>>();
