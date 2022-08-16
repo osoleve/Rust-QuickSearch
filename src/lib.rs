@@ -8,12 +8,18 @@ mod tests {
     use crate::string_sim::jaro_winkler;
     use crate::util::lines_from_file;
     #[test]
-    fn it_works() {
+    fn lines_from_file_works() {
         let names = lines_from_file(r"fake_names.txt");
+        assert!(names.contains(&"John Dean".to_string()));
+    }
+    #[test]
+    fn token_indexer_works() {
+        let names = vec!["Nichole Jenkins".to_string(), "John Smith".to_string()];
         let qs = QuickSearch::new(&names);
-        let name = "John Q. Peanut";
+        let name = "Nicky Jenkins";
         if let Some(results) = qs.find(name) {
-            assert!(results[0].0.contains("John"));
+            assert!(results[0].0.contains("Jenkins"));
+            assert!(results.len() == 1)
         } else {
             panic!()
         }
