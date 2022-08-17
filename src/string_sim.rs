@@ -1,3 +1,4 @@
+#![allow(clippy::cast_precision_loss)]
 use std::cmp::max;
 use std::cmp::min;
 use std::collections::HashSet;
@@ -63,12 +64,12 @@ fn _jaro(source_chars: &[&str], target_chars: &[&str]) -> f64 {
             continue;
         }
         while !target_matches[k] {
-            k += 1
+            k += 1;
         }
         if source_chars[i] != target_chars[k] {
             transpositions += 1;
         }
-        k += 1
+        k += 1;
     }
 
     let matches = f64::from(matches);
@@ -118,10 +119,10 @@ fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
     let mut dl_matrix = vec![vec![0; target_len]; source_len];
 
     for i in 1..source_len {
-        dl_matrix[i][0] = i
+        dl_matrix[i][0] = i;
     }
     for j in 1..target_len {
-        dl_matrix[0][j] = j
+        dl_matrix[0][j] = j;
     }
 
     for j in 1..target_len {
@@ -142,7 +143,7 @@ fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
             {
                 let temp = dl_matrix[i][j];
                 if temp > dl_matrix[i - 2][j - 2] + 1 {
-                    dl_matrix[i][j] = dl_matrix[i - 2][j - 2] + 1
+                    dl_matrix[i][j] = dl_matrix[i - 2][j - 2] + 1;
                 }
             }
         }
@@ -151,6 +152,7 @@ fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
     dl_matrix[source_len - 1][target_len - 1]
 }
 
+#[must_use]
 pub fn symmetric_damerau_levenshtein_norm(source: &str, target: &str) -> f64 {
     let source_chars: Vec<&str> = source.graphemes(true).collect();
     let target_chars: Vec<&str> = target.graphemes(true).collect();
