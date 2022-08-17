@@ -135,14 +135,14 @@ fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
 
                 1 + min(delete, min(insert, substitute))
             };
-            if i > 1 && j > 1 {
-                if source_chars[i - 1] == target_chars[j - 2]
-                    && source_chars[i - 2] == target_chars[j - 1]
-                {
-                    let temp = dl_matrix[i][j];
-                    if temp > dl_matrix[i - 2][j - 2] + 1 {
-                        dl_matrix[i][j] = dl_matrix[i - 2][j - 2] + 1
-                    }
+            if i > 1
+                && j > 1
+                && source_chars[i - 1] == target_chars[j - 2]
+                && source_chars[i - 2] == target_chars[j - 1]
+            {
+                let temp = dl_matrix[i][j];
+                if temp > dl_matrix[i - 2][j - 2] + 1 {
+                    dl_matrix[i][j] = dl_matrix[i - 2][j - 2] + 1
                 }
             }
         }
