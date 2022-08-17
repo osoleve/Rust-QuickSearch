@@ -5,7 +5,9 @@ pub mod util;
 #[cfg(test)]
 mod tests {
     use crate::quicksearch::QuickSearch;
-    use crate::string_sim::{damerau_levenshtein, jaro, jaro_winkler, ngram_jaccard};
+    use crate::string_sim::{
+        jaro, jaro_winkler, ngram_jaccard, symmetric_damerau_levenshtein_norm,
+    };
     use crate::util::{jaccard_similarity, lines_from_file};
     use std::collections::HashSet;
     #[test]
@@ -68,18 +70,18 @@ mod tests {
         }
     }
     #[test]
-    fn damerau_levenshtein_works() {
+    fn symmetric_damerau_levenshtein_norm_works() {
         let a = "Coast";
         let b = "Toast";
-        assert!(damerau_levenshtein(a, b) == 1);
+        assert!(symmetric_damerau_levenshtein_norm(a, b) == 0.8);
         let a = "Taco";
         let b = "Taco";
-        assert!(damerau_levenshtein(a, b) == 0);
+        assert!(symmetric_damerau_levenshtein_norm(a, b) == 1.0);
         let a = "";
         let b = "Taco";
-        assert!(damerau_levenshtein(a, b) == 4);
+        assert!(symmetric_damerau_levenshtein_norm(a, b) == 0.0);
         let a = "Drat";
         let b = "Darth";
-        assert!(damerau_levenshtein(a, b) == 2);
+        assert!(symmetric_damerau_levenshtein_norm(a, b) == 0.6);
     }
 }

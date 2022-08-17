@@ -107,10 +107,7 @@ pub fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
     jaccard_similarity(&source_bigrams, &target_bigrams)
 }
 
-pub fn damerau_levenshtein(source: &str, target: &str) -> usize {
-    let source_chars: Vec<&str> = source.graphemes(true).collect();
-    let target_chars: Vec<&str> = target.graphemes(true).collect();
-
+fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
     let source_len = source_chars.len() + 1;
     let target_len = target_chars.len() + 1;
 
@@ -139,8 +136,8 @@ pub fn damerau_levenshtein(source: &str, target: &str) -> usize {
                 1 + min(delete, min(insert, substitute))
             };
             if i > 1 && j > 1 {
-                println!("{:?}", dl_matrix);
-                if source_chars[i-1] == target_chars[j - 2] && source_chars[i - 2] == target_chars[j-1]
+                if source_chars[i - 1] == target_chars[j - 2]
+                    && source_chars[i - 2] == target_chars[j - 1]
                 {
                     let temp = dl_matrix[i][j];
                     if temp > dl_matrix[i - 2][j - 2] + 1 {
@@ -152,4 +149,13 @@ pub fn damerau_levenshtein(source: &str, target: &str) -> usize {
     }
 
     dl_matrix[source_len - 1][target_len - 1]
+}
+
+pub fn symmetric_damerau_levenshtein_norm(source: &str, target: &str) -> f64 {
+    let source_chars: Vec<&str> = source.graphemes(true).collect();
+    let target_chars: Vec<&str> = target.graphemes(true).collect();
+
+    let longer_len = max(source_chars.len(), target_chars.len());
+
+    1.0 - damerau_levenshtein(&source_chars, &target_chars) as f64 / longer_len as f64
 }
