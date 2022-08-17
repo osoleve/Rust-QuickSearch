@@ -4,7 +4,7 @@ Yet Another In-Memory Name Search Engine
 A blazing fast proper name search engine that scales well to anything your memory can hold.
 Uses token indexing as a pre-clustering heuristic, so it might work for things other than names but no promises.
 
-Uses Jaro-Winkler to score, but also includes an implementation of ngram Jaccard that can be used.
+Uses Jaro-Winkler to score, but also includes implementations of Jaro, ngram Jaccard, and the symmetric Damerau-Levenshtein norm that can be used.
 
 Interface is a WIP but it works.
 
