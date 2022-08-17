@@ -3,7 +3,7 @@ use quicksearch::quicksearch::QuickSearch;
 use quicksearch::util::lines_from_file;
 
 fn main() {
-    let names = lines_from_file(r"..\fake_names.txt");
+    let names = lines_from_file(r"fake_names.txt");
 
     println!("Building token index...");
     let qs = QuickSearch::new(&names);

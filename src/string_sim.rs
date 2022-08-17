@@ -63,12 +63,12 @@ fn _jaro(source_chars: &[&str], target_chars: &[&str]) -> f64 {
             continue;
         }
         while !target_matches[k] {
-            k += 1;
+            k += 1
         }
         if source_chars[i] != target_chars[k] {
             transpositions += 1;
         }
-        k += 1;
+        k += 1
     }
 
     let matches = f64::from(matches);
@@ -105,4 +105,51 @@ pub fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
     let target_bigrams: HashSet<&[&str]> = target_chars.windows(ngram_width).collect();
 
     jaccard_similarity(&source_bigrams, &target_bigrams)
+}
+
+pub fn damerau_levenshtein(source: &str, target: &str) -> usize {
+    let source_chars: Vec<&str> = source.graphemes(true).collect();
+    let target_chars: Vec<&str> = target.graphemes(true).collect();
+
+    let source_len = source_chars.len() + 1;
+    let target_len = target_chars.len() + 1;
+
+    if min(source_len, target_len) == 0 {
+        return max(source_len, target_len);
+    }
+
+    let mut dl_matrix = vec![vec![0; target_len]; source_len];
+
+    for i in 1..source_len {
+        dl_matrix[i][0] = i
+    }
+    for j in 1..target_len {
+        dl_matrix[0][j] = j
+    }
+
+    for j in 1..target_len {
+        for i in 1..source_len {
+            dl_matrix[i][j] = if source_chars[i - 1] == target_chars[j - 1] {
+                dl_matrix[i - 1][j - 1]
+            } else {
+                let delete = dl_matrix[i - 1][j];
+                let insert = dl_matrix[i][j - 1];
+                let substitute = dl_matrix[i - 1][j - 1];
+
+                1 + min(delete, min(insert, substitute))
+            };
+            if i > 1 && j > 1 {
+                println!("{:?}", dl_matrix);
+                if source_chars[i-1] == target_chars[j - 2] && source_chars[i - 2] == target_chars[j-1]
+                {
+                    let temp = dl_matrix[i][j];
+                    if temp > dl_matrix[i - 2][j - 2] + 1 {
+                        dl_matrix[i][j] = dl_matrix[i - 2][j - 2] + 1
+                    }
+                }
+            }
+        }
+    }
+
+    dl_matrix[source_len - 1][target_len - 1]
 }

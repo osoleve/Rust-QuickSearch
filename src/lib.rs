@@ -5,7 +5,7 @@ pub mod util;
 #[cfg(test)]
 mod tests {
     use crate::quicksearch::QuickSearch;
-    use crate::string_sim::{jaro, jaro_winkler, ngram_jaccard};
+    use crate::string_sim::{damerau_levenshtein, jaro, jaro_winkler, ngram_jaccard};
     use crate::util::{jaccard_similarity, lines_from_file};
     use std::collections::HashSet;
     #[test]
@@ -60,11 +60,26 @@ mod tests {
     }
     #[test]
     fn ranking_works() {
-        let names = vec!["Nichole Jenkins".to_string(), "John Smith".to_string()];
+        let names = vec!["Nichole Jenkins".to_string(), "J. Smith".to_string()];
         let qs = QuickSearch::new(&names);
         let name = "Nichole Smith";
         if let Some(results) = qs.find(name) {
             assert!(results[0].0.contains("Jenkins"));
         }
+    }
+    #[test]
+    fn damerau_levenshtein_works() {
+        let a = "Coast";
+        let b = "Toast";
+        assert!(damerau_levenshtein(a, b) == 1);
+        let a = "Taco";
+        let b = "Taco";
+        assert!(damerau_levenshtein(a, b) == 0);
+        let a = "";
+        let b = "Taco";
+        assert!(damerau_levenshtein(a, b) == 4);
+        let a = "Drat";
+        let b = "Darth";
+        assert!(damerau_levenshtein(a, b) == 2);
     }
 }

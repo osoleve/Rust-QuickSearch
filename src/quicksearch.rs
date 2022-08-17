@@ -28,10 +28,10 @@ impl QuickSearch {
 
         for name in names {
             for token in Self::tokenize(name) {
-                let set = token_index
+                token_index
                     .entry(token.to_string())
-                    .or_insert_with(HashSet::<String>::new);
-                set.insert(name.to_string());
+                    .or_insert_with(HashSet::<String>::new)
+                    .insert(name.to_string());
             }
         }
 
@@ -41,13 +41,15 @@ impl QuickSearch {
     #[must_use]
     pub fn get_token_matches(&self, name: &str) -> Option<HashSet<&String>> {
         let mut matches = HashSet::<&String>::new();
+        let mut is_matched = false;
         for token in Self::tokenize(name) {
             if let Some(data) = self.token_index.get(&token) {
                 matches.extend(data);
+                is_matched |= true;
             }
         }
 
-        if !matches.is_empty() {
+        if is_matched {
             Some(matches)
         } else {
             None
@@ -62,24 +64,21 @@ impl QuickSearch {
 
     /// # Panics
     ///
-    /// Will panic if `scorer` yields an f64 that
+    /// Will panic if `Self::score` yields an f64 that
     /// can't be compared against other f64s.
     #[must_use]
     pub fn find(&self, name: &str) -> Option<Vec<(String, f64)>> {
-        if let Some(names) = self.get_token_matches(name) {
-            let mut results = names
-                .iter()
-                .map(|s| {
-                    (
-                        (*s).to_string(),
-                        Self::score(&Self::normalize(name), &Self::normalize(s)),
-                    )
-                })
-                .collect::<Vec<(String, f64)>>();
-            results.sort_unstable_by(|a, b| (b.1).partial_cmp(&a.1).unwrap());
-            Some(results)
-        } else {
-            None
-        }
+        let mut results = self
+            .get_token_matches(name)?
+            .iter()
+            .map(|s| {
+                (
+                    (*s).to_string(),
+                    Self::score(&Self::normalize(name), &Self::normalize(s)),
+                )
+            })
+            .collect::<Vec<(String, f64)>>();
+        results.sort_unstable_by(|a, b| (b.1).partial_cmp(&a.1).unwrap());
+        Some(results)
     }
 }
