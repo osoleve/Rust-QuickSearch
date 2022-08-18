@@ -1,4 +1,3 @@
-#![allow(clippy::cast_precision_loss)]
 use std::cmp::max;
 use std::cmp::min;
 use std::collections::HashSet;
@@ -102,12 +101,13 @@ pub fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
     let source_chars: Vec<&str> = source.graphemes(true).collect();
     let target_chars: Vec<&str> = target.graphemes(true).collect();
 
-    let source_bigrams: HashSet<&[&str]> = source_chars.windows(ngram_width).collect();
-    let target_bigrams: HashSet<&[&str]> = target_chars.windows(ngram_width).collect();
+    let source_ngrams: HashSet<&[&str]> = source_chars.windows(ngram_width).collect();
+    let target_ngrams: HashSet<&[&str]> = target_chars.windows(ngram_width).collect();
 
-    jaccard_similarity(&source_bigrams, &target_bigrams)
+    jaccard_similarity(&source_ngrams, &target_ngrams)
 }
 
+#[must_use]
 fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
     let source_len = source_chars.len() + 1;
     let target_len = target_chars.len() + 1;
