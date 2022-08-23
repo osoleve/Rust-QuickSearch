@@ -5,8 +5,9 @@ pub mod util;
 
 #[cfg(test)]
 mod util_tests {
-    use crate::util::{jaccard_similarity, lines_from_file};
+    use crate::util::{jaccard_similarity, lines_from_file, string_profile};
     use float_cmp::approx_eq;
+    use pretty_assertions::assert_eq;
     use std::collections::HashSet;
 
     #[test]
@@ -32,6 +33,17 @@ mod util_tests {
                 ulps = 5
             ),
             "Not symmetric within 5 units least precision"
+        );
+    }
+
+    #[test]
+    fn string_profile_works() {
+        assert_eq!(string_profile("Abc"), "012".to_string());
+        assert_eq!(string_profile(&"Aabc".to_lowercase()), "0012".to_string());
+        assert_ne!(
+            string_profile("Aabc"),
+            string_profile(&"Aabc".to_lowercase()),
+            "Not case sensitive??"
         );
     }
 }

@@ -93,7 +93,7 @@ pub fn jaro_winkler(source: &str, target: &str) -> f64 {
         prefix_match += 1.0;
     }
     let score = _jaro(&source_chars, &target_chars);
-    score + 0.1 * prefix_match * (1.0 - score)
+    score + (0.1 * prefix_match) * (1.0 - score)
 }
 
 #[must_use]
@@ -108,6 +108,7 @@ pub fn ngram_jaccard(source: &str, target: &str, ngram_width: usize) -> f64 {
 }
 
 #[must_use]
+#[allow(clippy::needless_range_loop)]
 fn damerau_levenshtein(source_chars: &[&str], target_chars: &[&str]) -> usize {
     let source_len = source_chars.len() + 1;
     let target_len = target_chars.len() + 1;

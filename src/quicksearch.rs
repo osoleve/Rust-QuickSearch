@@ -38,7 +38,6 @@ impl QuickSearch {
         QuickSearch { token_index }
     }
 
-    #[must_use]
     pub fn get_token_matches(&self, name: &str) -> Option<HashSet<&String>> {
         let mut matches = HashSet::<&String>::new();
         let mut is_matched = false;
@@ -60,6 +59,7 @@ impl QuickSearch {
         jaro_winkler(source, target)
         //ngram_jaccard(source, target, 3) //trigram jaccard
         //ngram_jaccard(source, target, 2) //bigram jaccard
+        //symmetric_damerau_levenshtein_norm(source, target)
     }
 
     /// # Panics
